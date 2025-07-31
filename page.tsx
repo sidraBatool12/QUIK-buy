@@ -1,216 +1,303 @@
 'use client'
 
 import { useState } from 'react'
-import Navbar from './components/Navbar'
-import Footer from './components/Footer'
-import Link from 'next/link'
-import SidebarWithSearch from './components/SidebarWithSearch'
+import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
 
-export const allProducts = [
-  {
-    id: 1,
-    name: 'Wireless Headphones',
-    image: 'https://images.unsplash.com/photo-1585386959984-a4155224a1a5?auto=format&fit=crop&w=500&q=80',
-    price: '$99',
-    description: 'High-quality wireless headphones with noise cancellation and long battery life.',
-    rating: 4,
-  },
-  {
-    id: 2,
-    name: 'Smartphone',
-    image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=500&q=80',
-    price: '$699',
-    description: 'Latest smartphone with powerful performance and great camera.',
-    rating: 5,
-  },
-  {
-    id: 3,
-    name: 'Laptop Bag',
-    image: 'https://images.unsplash.com/photo-1618364691641-0de0b5fd9412?auto=format&fit=crop&w=500&q=80',
-    price: '$45',
-    description: 'Stylish and protective laptop bag with extra compartments.',
-    rating: 4,
-  },
-  {
-    id: 4,
-    name: 'Bluetooth Speaker',
-    image: 'https://images.unsplash.com/photo-1603791440384-56cd371ee9a7?auto=format&fit=crop&w=500&q=80',
-    price: '$59',
-    description: 'Portable speaker with deep bass and waterproof design.',
-    rating: 4,
-  },
-  {
-    id: 5,
-    name: 'Phone Case',
-    image: 'https://images.unsplash.com/photo-1611512346884-6c82bfc65133?auto=format&fit=crop&w=500&q=80',
-    price: '$15',
-    description: 'Shockproof phone case with sleek finish and drop protection.',
-    rating: 3,
-  },
-  {
-    id: 6,
-    name: 'Running Shoes',
-    image: 'https://images.unsplash.com/photo-1595950658703-2661c00a1601?auto=format&fit=crop&w=500&q=80',
-    price: '$120',
-    description: 'Comfortable and lightweight shoes designed for runners.',
-    rating: 4.5,
-  },
-  {
-    id: 7,
-    name: 'Leather Wallet',
-    image: 'https://images.unsplash.com/photo-1591375278062-5abac6f2d9c8?auto=format&fit=crop&w=500&q=80',
-    price: '$35',
-    description: 'Premium leather wallet with multiple compartments.',
-    rating: 4,
-  },
-  {
-    id: 8,
-    name: 'Makeup Kit',
-    image: 'https://images.unsplash.com/photo-1614351040568-d1f3e1797d40?auto=format&fit=crop&w=500&q=80',
-    price: '$60',
-    description: 'Complete makeup kit with premium-quality products.',
-    rating: 4.2,
-  },
-  {
-    id: 9,
-    name: 'Casual T-Shirt',
-    image: 'https://images.unsplash.com/photo-1580910051071-8b3e02f05d1b?auto=format&fit=crop&w=500&q=80',
-    price: '$25',
-    description: 'Cotton casual t-shirt perfect for daily wear.',
-    rating: 4.1,
-  },
-  {
-    id: 10,
-    name: 'Wrist Watch',
-    image: 'https://images.unsplash.com/photo-1509817316-6e4fabf89503?auto=format&fit=crop&w=500&q=80',
-    price: '$150',
-    description: 'Elegant wrist watch with leather strap and water resistance.',
-    rating: 4.6,
-  },
-  {
-    id: 11,
-    name: 'Denim Jeans',
-    image: 'https://images.unsplash.com/photo-1622519403454-bb60a64b4d88?auto=format&fit=crop&w=500&q=80',
-    price: '$49',
-    description: 'Slim-fit stretch denim jeans for all-day comfort.',
-    rating: 4.3,
-  },
-  {
-    id: 12,
-    name: 'Gaming Keyboard',
-    image: 'https://images.unsplash.com/photo-1622445270883-308e5b160239?auto=format&fit=crop&w=500&q=80',
-    price: '$89',
-    description: 'Mechanical keyboard with RGB lights and fast response.',
-    rating: 4.7,
-  },
-  {
-    id: 13,
-    name: 'Sunglasses',
-    image: 'https://images.unsplash.com/photo-1579635223612-b3e89ea7cc4f?auto=format&fit=crop&w=500&q=80',
-    price: '$35',
-    description: 'Stylish UV-protected sunglasses for outdoor use.',
-    rating: 4.1,
-  },
-  {
-    id: 14,
-    name: 'Backpack',
-    image: 'https://images.unsplash.com/photo-1579885885941-0cf5ec9e7e0b?auto=format&fit=crop&w=500&q=80',
-    price: '$40',
-    description: 'Multipurpose backpack with laptop sleeve and water resistance.',
-    rating: 4.3,
-  },
-  {
-    id: 15,
-    name: 'Lipstick Set',
-    image: 'https://images.unsplash.com/photo-1613069142649-3a4d8c8aa473?auto=format&fit=crop&w=500&q=80',
-    price: '$29',
-    description: 'Matte lipstick set with vibrant and long-lasting shades.',
-    rating: 4.4,
-  },
-  {
-    id: 16,
-    name: 'Fitness Tracker',
-    image: 'https://images.unsplash.com/photo-1579583761433-3e09c5eeb733?auto=format&fit=crop&w=500&q=80',
-    price: '$75',
-    description: 'Fitness band with heart rate monitor and step counter.',
-    rating: 4.2,
-  },
-  {
-    id: 17,
-    name: 'Perfume',
-    image: 'https://images.unsplash.com/photo-1585110396000-4ec7d6d28260?auto=format&fit=crop&w=500&q=80',
-    price: '$55',
-    description: 'Refreshing fragrance for long-lasting freshness.',
-    rating: 4,
-  },
-  {
-    id: 18,
-    name: 'Formal Shoes',
-    image: 'https://images.unsplash.com/photo-1618354691322-e356fdfd8f53?auto=format&fit=crop&w=500&q=80',
-    price: '$99',
-    description: 'Elegant leather shoes suitable for formal occasions.',
-    rating: 4.5,
-  },
-  {
-    id: 19,
-    name: 'Hoodie',
-    image: 'https://images.unsplash.com/photo-1602810311616-6c088bba1f77?auto=format&fit=crop&w=500&q=80',
-    price: '$39',
-    description: 'Soft cotton hoodie with front pocket and hood.',
-    rating: 4.3,
-  },
-  {
-    id: 20,
-    name: 'Hair Dryer',
-    image: 'https://images.unsplash.com/photo-1621687447846-4e1a88d56828?auto=format&fit=crop&w=500&q=80',
-    price: '$49',
-    description: 'Powerful and fast-drying hair dryer with cool shot feature.',
-    rating: 4,
-  },
-];
+export default function LoginPage() {
+  const router = useRouter()
 
-export default function HomePage() {
-  const [searchTerm, setSearchTerm] = useState('')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loggedIn, setLoggedIn] = useState(false)
 
-  const filteredProducts = allProducts.filter(product =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  // Forget password states
+  const [showForget, setShowForget] = useState(false)
+  const [email, setEmail] = useState('')
+  const [otpSent, setOtpSent] = useState(false)
+  const [otp, setOtp] = useState('')
+  const [inputOtp, setInputOtp] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [passwordResetSuccess, setPasswordResetSuccess] = useState(false)
+
+  // Dummy users database simulation
+  const dummyUsers = [
+    { username: 'user1', password: 'pass123' },
+    { username: 'admin', password: 'admin123' },
+  ]
+
+  function handleLogin(e: React.FormEvent) {
+    e.preventDefault()
+    setError('')
+
+    const user = dummyUsers.find(u => u.username === username)
+    if (!user) {
+      setError('User not found')
+      return
+    }
+    if (user.password !== password) {
+      setError('Incorrect password')
+      return
+    }
+
+    setLoggedIn(true)
+  }
+
+  function sendOtp() {
+    if (!email.includes('@')) {
+      alert('Please enter a valid email')
+      return
+    }
+    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString()
+    setOtp(generatedOtp)
+    setOtpSent(true)
+    alert(`OTP sent to your email: ${generatedOtp} (Simulation)`)
+  }
+
+  function resetPassword() {
+    if (newPassword.length < 6) {
+      alert('Password should be at least 6 characters')
+      return
+    }
+    setPasswordResetSuccess(true)
+    setShowForget(false)
+    alert('Password reset successful! Now login with new password.')
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-      <Navbar onSearchChange={setSearchTerm} />
+    <div className="min-h-screen flex items-center justify-center justify-center bg-gradient-to-br from-gray-700 to-gray-1000 p-4 relative">
+      {/* Back Button & Home Button */}
+      <div>
+        <div
+          className="absolute top-4 left-4 cursor-pointer"
+          onClick={() => router.back()}
+          title="Go Back"
+          aria-label="Go back"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 hover:text-indigo-900 transition"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </div>
+        <div
+          className="absolute top-4 left-14 cursor-pointer"
+          onClick={() => router.push('/')}
+          title="Home"
+          aria-label="Home"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 hover:text-indigo-900 transition"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l9-9 9 9M4 10v10a1 1 0 001 1h3m10-11v10a1 1 0 01-1 1h-3m-6 0h6" />
+          </svg>
+        </div>
+      </div>
 
-      <main className="mt-32 px-4 max-w-7xl mx-auto">
-        {filteredProducts.length === 0 ? (
-          <p className="text-gray-500 text-center text-lg py-10">No products found.</p>
-        ) : (
-          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {filteredProducts.map(product => (
-              <Link
-                key={product.id}
-                href={`/product/${product.id}`}
-                className="group bg-white dark:bg-gray-900 rounded-xl shadow border dark:border-gray-800 overflow-hidden transform transition-transform duration-300 hover:scale-[1.03]"
+      {!loggedIn ? (
+        <motion.form
+          onSubmit={handleLogin}
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-8 max-w-md w-full"
+        >
+          <h2 className="text-3xl font-bold mb-6 text-center ">Login to Quik-Buy</h2>
+          <input
+            type="text"
+            placeholder="Username"
+            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-grey-500 transition"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            className="w-full p-3 border mt-10 border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-grey-500 transition"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            required
+          />
+          {error && <p className="text-red-600">{error}</p>}
+
+          <motion.button
+            type="submit"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="w-full bg-indigo-600 text-white p-3 mt-10 rounded font-semibold hover:bg-indigo-700 transition"
+          >
+            Login
+          </motion.button>
+
+          <p
+            className="mt-5 text-center text-sm cursor-pointer hover:underline"
+            onClick={() => setShowForget(true)}
+          >
+            Forgot Password?
+          </p>
+          <p className="mt-4 text-center text-gray-600 dark:text-gray-400">
+            Don't have an account?{' '}
+            <a href="/signup" className="text-indigo-600 hover:text-indigo-800 font-semibold">
+              Signup here
+            </a>
+          </p>
+        </motion.form>
+      ) : (
+        <div className="text-center text-white">
+          <h1 className="text-3xl font-bold mb-4">Welcome, {username}!</h1>
+          <p>You have successfully logged in.</p>
+          <button
+            onClick={() => {
+              setLoggedIn(false)
+              setUsername('')
+              setPassword('')
+            }}
+            className="mt-6 px-6 py-2 bg-red-600 rounded hover:bg-red-700 transition"
+          >
+            Logout
+          </button>
+        </div>
+      )}
+
+      {/* Forget Password Modal */}
+      {showForget && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 py-10">
+          <motion.div
+            initial={{ opacity: 0, y: 60 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 60 }}
+            transition={{ duration: 0.5, type: "spring" }}
+            className="bg-gray-800 rounded-lg p-6 max-w-md w-full relative"
+          >
+            <button
+              onClick={() => {
+                setShowForget(false)
+                setOtpSent(false)
+                setInputOtp('')
+                setNewPassword('')
+                setPasswordResetSuccess(false)
+              }}
+              className="absolute top-3 right-3 text-gray-600 hover:text-gray-900 font-bold"
+              aria-label="Close modal"
+            >
+              &times;
+            </button>
+            {/* Step 1: Email input */}
+            {!otpSent && (
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 40 }}
+                transition={{ duration: 0.4 }}
               >
-                <img
-                  src={`${product.image}?auto=format&fit=crop&w=500&q=80`}
-                  alt={product.name}
-                  className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+                <h3 className="text-xl font-semibold mb-4 text-white">Reset Password</h3>
+                <input
+                  type="email"
+                  placeholder="Enter your registered email"
+                  className="w-full p-3 mb-10 border border-gray-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
                 />
-                <div className="p-4">
-                  <h2 className="text-lg font-semibold text-gray-800 dark:text-white">{product.name}</h2>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">{product.description}</p>
-                  <p className="text-blue-600 font-semibold mt-2">{product.price}</p>
-                  <div className="text-yellow-500 mt-1">
-                    {'⭐'.repeat(Math.floor(product.rating))}{'☆'.repeat(5 - Math.floor(product.rating))}
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
-      </main>
+                <button
+                  onClick={sendOtp}
+                  className="w-full bg-indigo-600 text-white p-3 rounded hover:bg-indigo-700 transition"
+                >
+                  Send OTP
+                </button>
+              </motion.div>
+            )}
 
-      <Footer></Footer>
+            {/* Step 2: OTP and new password */}
+            {otpSent && !passwordResetSuccess && (
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 40 }}
+                transition={{ duration: 0.4 }}
+              >
+                <h3 className="text-xl font-semibold mb-4 text-white">Enter OTP</h3>
+                <input
+                  type="text"
+                  placeholder="Enter OTP"
+                  className="w-full p-3 border border-gray-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                  value={inputOtp}
+                  onChange={e => setInputOtp(e.target.value)}
+                />
+                <button
+                  onClick={() => {
+                    if (inputOtp === otp) {
+                      alert('OTP verified! Please enter new password.')
+                    } else {
+                      alert('Wrong OTP, try again.')
+                    }
+                  }}
+                  className="w-full bg-indigo-600 text-white p-3 rounded hover:bg-indigo-700 transition mb-4"
+                >
+                  Verify OTP
+                </button>
+
+                {/* Animate new password input only if OTP is correct */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: inputOtp === otp ? 1 : 0.5, y: inputOtp === otp ? 0 : 20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <input
+                    type="password"
+                    placeholder="New Password"
+                    className="w-full p-3 border border-gray-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                    value={newPassword}
+                    onChange={e => setNewPassword(e.target.value)}
+                    disabled={inputOtp !== otp}
+                  />
+                  <button
+                    onClick={resetPassword}
+                    disabled={inputOtp !== otp}
+                    className={`w-full p-3 rounded text-white transition mb-10 ${
+                      inputOtp === otp ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'
+                    }`}
+                  >
+                    Reset Password
+                  </button>
+                </motion.div>
+              </motion.div>
+            )}
+
+            {/* Step 3: Success message */}
+            {passwordResetSuccess && (
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 40 }}
+                transition={{ duration: 0.3 }}
+                className="text-center text-green-700"
+              >
+                <h3 className="text-xl font-semibold mb-4">Password Reset Successful!</h3>
+                <button
+                  onClick={() => setShowForget(false)}
+                  className="bg-indigo-600 text-white p-3 rounded hover:bg-indigo-700 transition mb-10"
+                >
+                  Close
+                </button>
+              </motion.div>
+            )}
+          </motion.div>
+        </div>
+      )}
     </div>
+    
   )
 }
+
