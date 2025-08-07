@@ -4,13 +4,16 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 
+
 export default function LoginPage() {
-  const router = useRouter()
+
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loggedIn, setLoggedIn] = useState(false)
+  const router = useRouter();
+
 
   // Forget password states
   const [showForget, setShowForget] = useState(false)
@@ -23,26 +26,49 @@ export default function LoginPage() {
 
   // Dummy users database simulation
   const dummyUsers = [
-    { username: 'user1', password: 'pass123' },
     { username: 'admin', password: 'admin123' },
   ]
 
-  function handleLogin(e: React.FormEvent) {
-    e.preventDefault()
-    setError('')
+function handleLogin(e: React.FormEvent) {
+  e.preventDefault();
+  setError('');
 
-    const user = dummyUsers.find(u => u.username === username)
-    if (!user) {
-      setError('User not found')
-      return
-    }
-    if (user.password !== password) {
-      setError('Incorrect password')
-      return
-    }
+  const rawUsers = localStorage.getItem('quikbuy_users');
+  const users: any[] = rawUsers ? JSON.parse(rawUsers) : [];
 
-    setLoggedIn(true)
+  let user = users.find(u => u.username === username);
+
+  if (!user) {
+    // Signup-on-login
+    user = {
+      username,
+      password,
+      fullName: '',
+      email: '',
+      address: '',
+      createdAt: new Date().toISOString(),
+    };
+    users.push(user);
+    localStorage.setItem('quikbuy_users', JSON.stringify(users));
+  } else if (user.password !== password) {
+    setError('Incorrect password');
+    return;
   }
+
+  // Save login session
+  localStorage.setItem('quikbuy_session_user', username);
+
+  // Role-based redirection
+  if (username === 'admin') {
+    localStorage.setItem('role', 'admin');
+    router.push('/dashboard/admin'); // ✅ Go to admin
+  } else {
+    localStorage.setItem('role', 'user');
+    router.push('/dashboard/user'); // ✅ Go to user
+  }
+
+  setLoggedIn(true);
+}
 
   function sendOtp() {
     if (!email.includes('@')) {
@@ -155,20 +181,16 @@ export default function LoginPage() {
           </p>
         </motion.form>
       ) : (
-        <div className="text-center text-white">
-          <h1 className="text-3xl font-bold mb-4">Welcome, {username}!</h1>
-          <p>You have successfully logged in.</p>
-          <button
-            onClick={() => {
-              setLoggedIn(false)
-              setUsername('')
-              setPassword('')
-            }}
-            className="mt-6 px-6 py-2 bg-red-600 rounded hover:bg-red-700 transition"
-          >
-            Logout
-          </button>
-        </div>
+        <button
+  onClick={() => {
+    setLoggedIn(false);
+    setUsername('');
+    setPassword('');
+    router.push('/'); // 👈 home page pe redirect
+  }}>
+
+</button>
+
       )}
 
       {/* Forget Password Modal */}
